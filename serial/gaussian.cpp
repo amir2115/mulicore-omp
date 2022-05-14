@@ -28,7 +28,6 @@ void applyGaussianFilter(Mat source, Mat filteredImage, int x, int y, int diamet
     }
     iFiltered = iFiltered / wP;
     filteredImage.at<double>(x, y) = iFiltered;
-
 }
 
 Mat myGaussianFilter(Mat source, int diameter, double sigma) {

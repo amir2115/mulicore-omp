@@ -48,7 +48,7 @@ Mat myBilateralFilter(Mat source, int diameter, double sigmaI, double sigmaS) {
 
     int i = 1, j = 1;
 
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2) schedule(runtime)
     for (i = 1; i < height - 1; i++) {
         for (j = 1; j < width - 1; j++) {
             applyBilateralFilter(source, filteredImage, i, j, diameter, sigmaI, sigmaS);
@@ -68,6 +68,7 @@ int main(int argc, char **argv) {
     originalImage = imread(argv[1], IMREAD_GRAYSCALE);
     int num_iterations = atoi(argv[2]);
     omp_set_num_threads(4);
+    omp_set_schedule(omp_sched_guided, 4);
     if (!originalImage.data) {
         std::cout << "Image not found or unable to open" << std::endl;
         return -1;
@@ -76,12 +77,11 @@ int main(int argc, char **argv) {
     int diameter = 3;
     double sigmaI = 12.0;
     double sigmaS = 16.0;
-
     Mat myFilteredImage;
 
     auto t3 = high_resolution_clock::now();
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(runtime)
     for (int i = 0; i < num_iterations; i++) {
         std::cout << "#";
         std::cout.flush();
